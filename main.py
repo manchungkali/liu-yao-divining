@@ -39,31 +39,51 @@ des_dict = json.loads(file_contents)
 
 
 st.set_page_config(
-    page_title="六爻游戏",
+    page_title="AI Fortune Telling｜liu yao divining",
     page_icon="🔮",
     layout="centered",
 )
 
-st.markdown('## 六爻游戏')
+
+st.markdown("""
+    <style>
+        .reportview-container {
+            margin-top: -2em;
+        }
+        #MainMenu {visibility: hidden;}
+        .stDeployButton {display:none;}
+        footer {visibility: hidden;}
+        #stDecoration {display:none;}
+    </style>
+""", unsafe_allow_html=True)
+
+
+st.markdown('## AI Fortune Telling｜LIU YAO Divining')
 st.markdown(""" 
-> 本网站**仅供娱乐**，并非用来算命、迷信或卜卦的工具。所有的结果都是随机生成的，我们强烈建议用户不要受其内容的影响来做出任何决策。  
-> 此外，其生成结果的过程仅供参考，只是游戏流程的一部分，不代表任何正统操作。  
-> 这个网站只是为了测试和娱乐，不允许用于商业用途，所有的内容都不能当作真实的，未成年人请勿使用。请各位用户理性对待，保持娱乐的心态，不要依赖或深信其结果。  
+
+>This website is for entertainment purposes only and is not intended for fortune-telling, superstition, or divination. All results are randomly generated, and we strongly advise users not to make any decisions based on its content.
+
+>Furthermore, the process of generating results is for reference purposes only and is just a part of the game's flow, not representing any orthodox practice.
+
+>This website is purely for testing and entertainment and is not allowed for commercial use. All content should not be considered real, and minors should refrain from using it. We urge all users to approach it with a rational mindset and maintain an attitude of entertainment. Do not rely on or deeply believe in its results.
              
-[网站源代码](https://github.com/RealKai42/liu-yao-divining)    
-🥺 玩的开心记得点个 star 呀～
+[AI Chat With God](https://aigod.sense-ocean.com)
+🥺 "Thank you for using! Have fun, and remember to share with friends to enjoy!"
 """)
 st.markdown("""
-            六爻为丢 **六次** 三枚硬币，根据三枚硬币的正反（字背）对应本次阴阳，三次阴阳对应八卦中的一卦  
-            六次阴阳对应六爻，六爻组合成两个八卦，对应八八六十四卦中的卦辞，根据卦辞进行 **随机** 解读  
-              
-            为保证可用性和成本限制，每次只能提问**一个问题**，请谨慎提问
+            
+            In the Six-Yao Divination, you will toss three coins six times. Based on the results of the coins (heads or tails), you will determine the yin and yang lines for each of the six throws. These six lines will then form two hexagrams, corresponding to one of the sixty-four hexagrams in the I Ching.
+
+            The six yin and yang lines will represent six yao, and the combination of these six yao will form two hexagrams, which in turn correspond to specific hexagram descriptions. You can then interpret the hexagram descriptions for a random reading.
+
+            To ensure usability and cost constraints, please note that you can only ask one question at a time. Please ask your question carefully.
+            
             """)
 
 if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "assistant",
-        "content": [{"type": "text", "content": "告诉我你心中的疑问吧 ❤️"}]
+        "content": [{"type": "text", "content": "Tell me your question in your heart ❤️"}]
     }]
 if "disable_input" not in st.session_state:
     st.session_state.disable_input = False
@@ -107,7 +127,7 @@ def format_coin_result(coin_result, i):
 def disable():
     st.session_state["disable_input"] = True
 
-if question := st.chat_input(placeholder="输入你内心的疑问", key='input', disabled=st.session_state.disable_input, on_submit=disable):
+if question := st.chat_input(placeholder="Enter your inner question.", key='input', disabled=st.session_state.disable_input, on_submit=disable):
     add_message("user", question)
     first_yin_yang = []
     for i in range(3):
@@ -135,17 +155,17 @@ if question := st.chat_input(placeholder="输入你内心的疑问", key='input'
         卦辞为：{gua_des['sentence']}   
     """)
 
-    with st.spinner('加载解读中，请稍等 ......'):
+    with st.spinner('In the process of loading the interpretation, please wait a moment. ......'):
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages = [{"role":"system","content":"你是一位出自中华六爻世家的卜卦专家，你的任务是根据卜卦者的问题和得到的卦象，为他们提供有益的建议。你的解答应基于卦象的理解，同时也要尽可能地展现出乐观和积极的态度，引导卜卦者朝着积极的方向发展。"},
+            messages = [{"role":"system","content":"You are a divination expert from a prestigious Chinese Six Yao lineage. Your task is to provide valuable advice to those seeking divination based on their questions and the resulting hexagrams. Your responses should be grounded in an understanding of the hexagrams while also aiming to convey optimism and a positive attitude, guiding the diviners towards constructive paths of development."},
                         {"role":"user","content":f"""
-                        问题是：{question},
-                        六爻结果是：{gua},
-                        卦名为：{gua_des['name']},
+                        The thing is：{question},
+                        The result of the Six Yao divination is:：{gua},
+                        The name of the hexagram is:：{gua_des['name']},
                         {gua_des['des']},
-                        卦辞为：{gua_des['sentence']}"""},
+                        The hexagram's text is:：{gua_des['sentence']}"""},
                         ],
             temperature=0.7,
             max_tokens=500,
@@ -156,5 +176,5 @@ if question := st.chat_input(placeholder="输入你内心的疑问", key='input'
     add_message("assistant", response.choices[0].message.content)
     time.sleep(0.1)
 
-    add_message("assistant", """感谢使用，[网站源代码](https://github.com/RealKai42/liu-yao-divining)  
-                     玩的开心记得点个 star 呀 ❤️""", 0.01)
+    add_message("assistant", """[AI Chat With God](https://aigod.sense-ocean.com)  
+                    Thank you for using! Have fun, and remember to share with friends to enjoy!""", 0.01)
